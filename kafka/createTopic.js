@@ -2,7 +2,7 @@ const { Kafka } = require('kafkajs');
 
 const kafka = new Kafka({
   clientId: 'my-admin',
-  brokers: ['192.166.1.220:19092']
+  brokers: ['192.166.1.91:19092']
 });
 
 const admin = kafka.admin();

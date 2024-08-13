@@ -4,7 +4,7 @@ const { Kafka } = require('kafkajs');
 
 const kafka = new Kafka({
   clientId: 'my-producer',
-  brokers: ['192.166.1.220:19092'] // Kafka broker의 IP 주소와 포트
+  brokers: ['192.166.1.91:19092'] // Kafka broker의 IP 주소와 포트
 });
 
 const producer = kafka.producer();
