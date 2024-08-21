@@ -1,0 +1,70 @@
+#
+# AWS EC2 인스턴스 시작 및 중지하는 Ansible Playbook
+#
+
+- hosts: localhost
+  connection: local
+  gather_facts: no
+
+  vars:
+    instance_ids:
+      # - i-0ba672abed8ce8465 # server
+      - i-0925685b8317e44a4 # db
+      - i-0e6ddd28000287d4e # kafka
+      # - i-0ac1dd9acd2ec945b # elk
+    ansible_user: ec2-user
+    ansible_ssh_private_key_file: ./bunch-key.pem
+
+  tasks:
+    - name: Start EC2 instances
+      amazon.aws.ec2_instance:
+        region: "ap-northeast-2"
+        instance_ids: "{{ instance_ids }}"
+        state: running
+      tags: start
+
+    - name: Wait for EC2 instances to be running
+      amazon.aws.ec2_instance_info:
+        region: "ap-northeast-2"
+        instance_ids: "{{ instance_ids }}"
+      register: ec2_info
+      until: ec2_info.instances | selectattr('state.name', 'equalto', 'running') | list | length == instance_ids | length
+      retries: 5
+      delay: 10
+      tags: start
+
+    - name: Get the public IPs of the EC2 instances
+      set_fact:
+        all_ips: "{{ ec2_info.instances | map(attribute='public_ip_address') | list }}"
+      tags: start
+
+    - name: Ensure [ec2_hosts] group exists in inventory.ini
+      lineinfile:
+        path: ./inventory.ini
+        line: "[ec2_hosts]"
+        create: yes
+      tags: start
+
+    - name: Add all Public IPs to inventory.ini
+      lineinfile:
+        path: ./inventory.ini
+        line: "{{ item }} ansible_user={{ansible_user}} ansible_ssh_private_key_file={{ansible_ssh_private_key_file}}"
+        insertafter: "[ec2_hosts]"
+      loop: "{{ all_ips }}"
+      tags: start
+
+
+    - name: Stop EC2 instances
+      amazon.aws.ec2_instance:
+        region: "ap-northeast-2"
+        instance_ids: "{{ instance_ids }}"
+        state: stopped
+      register: stopped_instances
+      tags: stop
+
+    - name: Remove [ec2_hosts] section and its entries from inventory.ini
+      lineinfile:
+        path: ./inventory.ini
+        state: absent
+        regexp: '^(\[ec2_hosts\]|[0-9]+\.[0-9]+\.[0-9]+\.[0-9]+ ansible_user=.*)$'
+      tags: stop
