@@ -1,0 +1,50 @@
+#
+# AWS EC2 환경변수 주입하는 Ansible Playbook
+#
+
+- hosts: ec2_hosts
+  become: true
+  gather_facts: true
+
+  vars:
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
+    instance_map:
+      i-0ba672abed8ce8465: # fullstack
+        BOOTSTRAP_SERVER: "192.166.1.91:19092"
+        DB_URL: "jdbc:mariadb://192.166.2.132:3306/fullstackDB"
+        DB_USERNAME: "fullstackDB_user"
+        DB_PASSWORD: "fullstack1234"
+      # i-0ba672abed8ce8466: # ai
+      #   BOOTSTRAP_SERVER: "192.166.1.91:19092"
+      #   DB_URL: "jdbc:mariadb://192.166.2.132:3306/aiDB"
+      #   DB_USERNAME: "aiDB_user"
+      #   DB_PASSWORD: "ai1234"
+      # i-0ac1dd9acd2ec945b: # elk
+      #   BOOTSTRAP_SERVER: "192.166.1.91:19092"
+
+  tasks:
+    - name: Set fact based on EC2 instance ID
+      set_fact:
+        instanceID: "{{ ansible_facts['board_asset_tag'] }}"
+    
+    - name: Debug the value of instanceID
+      debug:
+        var: instanceID 
+
+    - name: Add environment variables to /etc/environment
+      ansible.builtin.lineinfile:
+        path: /etc/environment
+        line: "{{ item }}"
+        create: yes
+      loop:
+        - "BOOTSTRAP_SERVER={{ instance_map[instanceID].BOOTSTRAP_SERVER }}"
+        - "DB_URL={{ instance_map[instanceID].DB_URL | default('') }}"
+        - "DB_USERNAME={{ instance_map[instanceID].DB_USERNAME | default('') }}"
+        - "DB_PASSWORD={{ instance_map[instanceID].DB_PASSWORD | default('') }}"
+      when: instanceID in instance_map.keys()
+
+    - name: Ensure the environment variables are loaded
+      ansible.builtin.shell: |
+        source /etc/environment
+      when: instanceID in instance_map.keys()
+    
