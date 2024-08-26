@@ -8,12 +8,13 @@
 
   vars:
     instance_ids:
-      # - i-0ba672abed8ce8465 # server
+      - i-0ba672abed8ce8465 # fullstack
+      # - i-0ba672abed8ce8466 # ai
       - i-0925685b8317e44a4 # db
-      - i-0e6ddd28000287d4e # kafka
+      # - i-0e6ddd28000287d4e # kafka
       # - i-0ac1dd9acd2ec945b # elk
     ansible_user: ec2-user
-    ansible_ssh_private_key_file: ./bunch-key.pem
+    ansible_ssh_private_key_file: ../bunch-key.pem
 
   tasks:
     - name: Start EC2 instances

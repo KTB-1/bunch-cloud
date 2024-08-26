@@ -1,5 +1,5 @@
 #
-# Docker Composer를 사용하여 서비스를 관리하는 Ansible Playbook
+# Docker Compose를 사용하여 서비스를 관리하는 Ansible Playbook
 #
 
 - hosts: ec2_hosts
