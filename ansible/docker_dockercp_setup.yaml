@@ -2,8 +2,11 @@
 # Docker, Docker Compose 설치 및 설정을 위한 Ansible Playbook
 #
 
-- hosts: init_hosts
+- hosts: ec2_hosts
   become: true # sudo로 진행할건지
+  
+  vars:
+    ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
 
   tasks:
     - name: Update all packages
