@@ -3,63 +3,70 @@ CREATE DATABASE fullstackDB;
 USE fullstackDB;
 
 CREATE TABLE Users (
-    userId BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
-    email VARCHAR(255) NOT NULL,
+    userId VARCHAR(255) NOT NULL PRIMARY KEY,
     username VARCHAR(255) NOT NULL,
-    password VARCHAR(255) NOT NULL,
     profileUrl VARCHAR(255),
-    createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+    createdAt TIMESTAMP NOT NULL,
+    updateAt TIMESTAMP NOT NULL
 );
 
--- CREATE TABLE Urls (
---     urlId BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
---     userId BIGINT NOT NULL,
---     url VARCHAR(255) NOT NULL,
---     isDeleted BOOLEAN NOT NULL DEFAULT FALSE,
---     FOREIGN KEY (userId) REFERENCES Users(userId)
--- );
+CREATE TABLE Uris (
+    urlId BIGINT NOT NULL PRIMARY KEY,
+    userId VARCHAR(255) NOT NULL,
+    url VARCHAR(255) NOT NULL,
+    isDeleted BOOLEAN DEFAULT FALSE,
+    created TIMESTAMP NOT NULL,
+    FOREIGN KEY (userId) REFERENCES Users(userId)
+);
 
--- CREATE TABLE Relations (
---     relationId BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
---     followerId BIGINT NOT NULL,
---     followeeId BIGINT NOT NULL,
---     status ENUM('pending', 'accepted', 'rejected') NOT NULL DEFAULT 'pending',
---     requestedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
---     FOREIGN KEY (followerId) REFERENCES Users(userId),
---     FOREIGN KEY (followeeId) REFERENCES Users(userId)
--- );
+CREATE TABLE Relations (
+    relationId BIGINT NOT NULL PRIMARY KEY,
+    followerId VARCHAR(255) NOT NULL,
+    followeeId VARCHAR(255) NOT NULL,
+    status ENUM('pending', 'accepted', 'rejected') DEFAULT 'pending',
+    createdAt TIMESTAMP NOT NULL,
+    updatedAt TIMESTAMP NOT NULL,
+    isDeleted BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (followerId) REFERENCES Users(userId),
+    FOREIGN KEY (followeeId) REFERENCES Users(userId)
+);
 
--- CREATE TABLE Posts (
---     postId BIGINT NOT NULL AUTO_INCREMENT PRIMARY KEY,
---     userId BIGINT NOT NULL,
---     title VARCHAR(255) NOT NULL,
---     newsUrl VARCHAR(255),
---     content TEXT,
---     createdAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
---     updatedAt TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
---     FOREIGN KEY (userId) REFERENCES Users(userId)
--- );
+CREATE TABLE Posts (
+    postId BIGINT NOT NULL PRIMARY KEY,
+    userId VARCHAR(255) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    newsUrl VARCHAR(255),
+    content TEXT,
+    createdAt TIMESTAMP NOT NULL,
+    updatedAt TIMESTAMP NOT NULL,
+    isDeleted BOOLEAN DEFAULT FALSE,
+    FOREIGN KEY (userId) REFERENCES Users(userId)
+);
+
 
 
 -- 인공지능DB 초기화 스크립트
 CREATE DATABASE aiDB;
 USE aiDB;
 
-CREATE TABLE News (
-    news_id INT PRIMARY KEY AUTO_INCREMENT,
-    news_url VARCHAR(255) NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    summary TEXT,
-    embedding TEXT
+CREATE TABLE IF NOT EXISTS News (
+        news_id INT AUTO_INCREMENT PRIMARY KEY,
+        category TEXT,
+        news_url VARCHAR(255),
+        title VARCHAR(255),
+        description TEXT,
+        content TEXT,
+        summary TEXT,
+        publication_date VARCHAR(255),
+        embedding INT
 );
 
-CREATE TABLE UserNewsViews (
-    view_id INT PRIMARY KEY AUTO_INCREMENT,
-    user_id INT,
-    news_id INT,
-    view_date DATETIME,
-    FOREIGN KEY (news_id) REFERENCES News(news_id)
+CREATE TABLE IF NOT EXISTS UserNewsViews (
+        view_id INT AUTO_INCREMENT PRIMARY KEY,
+        user_id INT,
+        news_id INT,
+        view_date VARCHAR(255),
+        FOREIGN KEY (news_id) REFERENCES News(news_id)
 );
 
 
