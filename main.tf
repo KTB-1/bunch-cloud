@@ -1,3 +1,5 @@
+# TODO: AWS S3 - 서버 인스턴스 역할 부여 추가
+
 provider "aws" {
   region = "ap-northeast-2"
 }
@@ -93,6 +95,40 @@ resource "aws_security_group" "sg" {
   ingress {
     from_port   = 8081
     to_port     = 8081
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
+resource "aws_security_group" "sg_ai" {
+  name        = "bunch_dev_sg_ai"
+  description = "Security group for ai server"
+  vpc_id = aws_vpc.main.id
+
+  ingress {
+    from_port   = 22
+    to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress { # ping - 모든 ICMP, 내 VPC
+    from_port   = -1
+    to_port     = -1
+    protocol    = "icmp"
+    cidr_blocks = ["192.166.0.0/16"] 
+  }
+
+  ingress {
+    from_port   = 11434
+    to_port     = 11434
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -242,6 +278,18 @@ resource "aws_instance" "server_instance" {
 
   tags = {
     Name = "bunch_dev_server_instance"
+  }
+}
+
+resource "aws_instance" "ai_server_instance" {
+  ami           = "ami-045f2d6eeb07ce8c0" # amazon linux
+  instance_type = "g4dn.xlarge"
+  key_name      = "bunch-key"
+  subnet_id     = aws_subnet.subnet_2a.id
+  vpc_security_group_ids = [aws_security_group.sg_ai.id]
+
+  tags = {
+    Name = "bunch_dev_ai_server_instance"
   }
 }
 
