@@ -10,15 +10,12 @@
     ansible_ssh_common_args: '-o StrictHostKeyChecking=no'
     instance_map:
       i-04eb2787f4fafb2bb: # fullstack
-        BOOTSTRAP_SERVER: "192.166.1.132:19092"
+        KAFKA_BOOTSTRAP_SERVER: "192.166.1.132:19092"
+        KAFKA_TOPIC_RELATION: relation
         DB_URL: "jdbc:mariadb://192.166.2.25:3306/fullstackDB"
-        DB_USERNAME: "fullstackDB_user"
-        DB_PASSWORD: "fullstack1234"
-      # i-0ba672abed8ce8466: # ai
-      #   DB_HOST: "192.166.2.25"
-      #   DB_DATABASE: "aiDB"
-      #   DB_USERNAME: "aiDB_user"
-      #   DB_PASSWORD: "ai1234"
+        DB_USER: "fullstackDB_user"
+        DB_PW: "fullstack1234"
+
       i-057eaeb9774d59364: # elk
         BOOTSTRAP_SERVER: "192.166.1.132:19092"
       i-09449a343d5416bf7: # kafka
