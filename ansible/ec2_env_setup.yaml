@@ -12,16 +12,29 @@
       i-04eb2787f4fafb2bb: # fullstack
         KAFKA_BOOTSTRAP_SERVER: "192.166.1.132:19092"
         KAFKA_TOPIC_RELATION: relation
-        DB_URL: "jdbc:mariadb://192.166.2.25:3306/fullstackDB"
-        DB_USER: "fullstackDB_user"
+        DB_URL: "jdbc:mariadb://192.166.2.25:3306/fullstackdb"
+        DB_USER: "fullstackdb_user"
         DB_PW: "fullstack1234"
-
+        AWS_ACCESS_KEY_ID: AKIA3N7PJZH7R6RPIDWP
+        AWS_SECRET_ACCESS_KEY: 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
+        AWS_REGION: ap-northeast-2
+        AWS_S3_BUCKET_NAME: ktb-bunch-bucket
+        RECOMMEND_SERVER_URL: http://192.166.1.141:5000/
+      i-02adb488221d704c0: # ai
+        DB_HOST: "192.166.2.25"
+        MYSQL_DATABASE: "aidb"
+        FULLSTACK_DATABASE: "fullstackdb"
+        MYSQL_USER: "aidb_user"
+        MYSQL_PASSWORD: "ai1234"
+        CLIENT_ID: hZm0ny7bv69wAHcdYffq
+        CLIENT_SECRET: pIyAPPtzD2
+        OLLAMA_BASE_URL: http://192.166.1.141:11434
       i-057eaeb9774d59364: # elk
         BOOTSTRAP_SERVER: "192.166.1.132:19092"
       i-09449a343d5416bf7: # kafka
         BOOTSTRAP_SERVER: "192.166.1.132:19092"
       i-0849326fe5d24f6ad: # db
-        DB_ROOT_PASSWORD: "root1234"
+        MARIADB_ROOT_PASSWORD: "root1234"
 
 
   tasks:

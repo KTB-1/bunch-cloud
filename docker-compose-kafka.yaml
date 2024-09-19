@@ -45,7 +45,7 @@ services:
       - 8080:8080
     environment:
       - DYNAMIC_CONFIG_ENABLED=true
-      - KAFKA_CLUSTERS_0_NAME=test_kafka
+      - KAFKA_CLUSTERS_0_NAME=bunch-kafka
       - KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS=${BOOTSTRAP_SERVER}
     networks:
       - kafka-net

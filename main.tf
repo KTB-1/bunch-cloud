@@ -92,9 +92,23 @@ resource "aws_security_group" "sg" {
     cidr_blocks = ["192.166.0.0/16"] 
   }
 
-  ingress {
+  ingress { # user모듈
     from_port   = 8081
     to_port     = 8081
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress { # feed 모듈
+    from_port   = 8082
+    to_port     = 8082
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+    ingress { # relation 모듈
+    from_port   = 8083
+    to_port     = 8083
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -126,9 +140,9 @@ resource "aws_security_group" "sg_ai" {
     cidr_blocks = ["192.166.0.0/16"] 
   }
 
-  ingress {
-    from_port   = 11434
-    to_port     = 11434
+  ingress { # Flask
+    from_port   = 5000 
+    to_port     = 5000
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -266,8 +280,6 @@ resource "aws_security_group" "sg_db" {
 
 
 
-
-
 # EC2 Instance
 resource "aws_instance" "server_instance" {
   ami           = "ami-045f2d6eeb07ce8c0" # amazon linux
@@ -287,6 +299,11 @@ resource "aws_instance" "ai_server_instance" {
   key_name      = "bunch-key"
   subnet_id     = aws_subnet.subnet_2a.id
   vpc_security_group_ids = [aws_security_group.sg_ai.id]
+
+  root_block_device {
+    volume_size = 30  # 루트 볼륨 크기를 30GB로 설정
+    volume_type = "gp3"
+  }
 
   tags = {
     Name = "bunch_dev_ai_server_instance"
